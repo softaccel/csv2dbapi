@@ -1,0 +1,150 @@
+<html>
+    <head>
+        <title></title>
+        <style>
+            td{
+                max-width: 300px;
+            }
+            button.active{
+                background-color:aquamarine;
+            }
+            .selectMode tr:hover{
+                background-color: silver;
+            }
+            .hidden{
+                display: none;
+            }
+            .success{
+                background-color: greenyellow;
+            }
+            .fail{
+                background-color: red;
+            }
+            td.collapsed,th.collapsed {
+                max-width: 40px;
+                overflow: hidden;
+            }
+            td.collapsed{
+                color: white;
+            }
+            table>tr        :first-child{
+                max-width: 50px;
+            }
+                
+        </style>
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container mt-5">
+            <h1>DBAPI CSV importer</h1>
+            
+            <div class="card mt-2">
+                <div class="card-header">
+                    CSV file
+                </div>
+                <div class="card-body">
+                    <form id="form" style="">
+                        <div class="row">
+                            <div class="col-3">
+                                <label>CSV File</label>
+                                <input type="file" name="file" class="form-select form-select-sm" id="file" accept="text/csv" onchange="loadCsvFile()">
+                            </div>
+                            <div class="col-2">
+                                <label>Separated by</label>
+                                <input class="form-control" type="text" value="," name="separator" size="2">
+                            </div>
+                            <div class="col-2">
+                                <label>Delimiter</label>
+                                <select name="delimiter" class="form-select">
+                                    <option>'</option>
+                                    <option>"</option>
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" name="thnum">
+                    </form> 
+                </div>
+            </div>
+                
+            <div class="card mt-2">
+                <div class="card-header">
+                    Destination settings
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <label>DBAPI Base URL</label>
+                            <input type="text" id="apiBaseUrl" value="" class="form-control" onkeyup="loadApiSpec()">
+                        </div>
+                        <div class="col-4">
+                            <label>API Key</label>
+                            <input type="text" class="form-control" id="apiKey" value="9e1d5a10-a4b9-47b1-94ca-5e86e0cefcd8" onkeyup="loadApiSpec()">
+                        </div>
+                        <div class="col-4 d-none" id="endPointSelectorView">
+                            <label>Target table</label>
+                            <select id="endPointSelector" onchange="updateFldMapSelect()" class="form-select"><option value="">Select endpoint</option></select>
+                        </div>
+                        <div class="col-4 d-none text-danger" id="invalidApiSpec">
+                            Invalid Config
+                        </div>
+                    </div>
+                    
+                    </div>
+            </div>
+
+            
+            
+            
+            <span id="demo"></span>
+    
+            <div class="card mt-2">
+                <div class="card-header">
+                    Preview
+                </div>
+                <div class="card-body" style="overflow-x: auto; max-height: 400px">
+                    <button onclick="toggleHeadRowSelection(this)" type="button">ChooseHeader</button>
+
+                    <table border="1" id="table" class="table-hover table-bordered" style="font-size: 0.8rem; width: 100%;">
+                        <thead style="background-color: rgb(157, 193, 207);">
+                            <tr></tr>
+                            <tr></tr>
+                        </thead>
+                        <tbody onclick="toggleSelect(event)">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card mt-2">
+                <div class="card-header">
+                    Import settings
+                </div>
+                <div class="card-body">
+                    On duplicate clause:
+                    <select id="onduplicate" onchange="updateOnDupe(this)">
+                        <option>ignore</option>
+                        <option>error</option>
+                        <option>update</option>
+                    </select>
+                    <span id="confgFlds2Update" style="display: none;">fields: <input type="text" id="flds2update"></span>
+                    <pre id="status"></pre>
+                </div>
+                <div class="card-footer">
+                    <button onclick="startImport()" class="btn btn-primary" type="button">Start Import</button>
+                </div>
+            </div>  
+        </div>
+    </body>
+    <div class="d-none">
+        <select onclick="addFilter(this)" id="filterTemplates" style="display: block;">
+            <option value="">all</option>
+            <option value="$(?!^)">not empty cells</option>
+            <option value="$^">empty cells</option>
+            <option value="$-?\d+^">integer</option>
+            <option value="$-?\d+(\.\d+)?^">float</option>
+        </select>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="csv2array.js"></script>
+    <script src="node_modules/sed-lite/dist/sed-lite.min.js"></script>
+    <script src="script.js"></script>
+</html>
